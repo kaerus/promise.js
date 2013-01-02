@@ -6,22 +6,22 @@
 Promise.js
 ==========
 A performant Promises/A+ library. 
-+Passing all Promises/A+ specification tests.
-+Small footprint, only 640 bytes compressed / 1400 bytes minified.
-+Works in browsers (clientside) & node.js (serverside).
-+Uses ```process.nextTick``` or ```MessageChannel``` for faster processing.
+* Passing all Promises/A+ specification tests.
+* Small footprint, only 640 bytes compressed / 1400 bytes minified.
+* Works in browsers (clientside) & node.js (serverside).
+* Uses ```process.nextTick``` or ```MessageChannel``` for faster processing.
 
 Usage
 =====
 Include the promise.js file into your project using an AMD compatible loader.
-A minified version is included in dist/promise.js
-In node.js you need install ```amdefine``` to be able to require the module. 
+A minified version is included in dist/promise.js.
+You need to have ```amdefine``` to be able to require the module in node.js. 
 
 
 Test & build
 ============
-Install the development requirements using ```npm i -d```
-Run ```make``` for running the tests and building.
+Install the development requirements using ```npm i -d```.
+Then ```make``` for running the tests and building.
 
 
 License
