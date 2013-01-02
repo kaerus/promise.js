@@ -1,0 +1,4 @@
+promise.js
+==========
+
+A+ Promises
