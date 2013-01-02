@@ -57,7 +57,7 @@ define(function (require) {
                 if(value instanceof Promise || (value && value.then) )  {
                     value.then(function(){
                         promise.fulfill.apply(promise,arguments); 
-                    }, function(x){
+                    }, function(){
                         promise.reject.apply(promise,arguments);
                     });
 
@@ -103,7 +103,7 @@ define(function (require) {
         return this;
     }
 
-    Promise.prototype.reject = function(reason) {
+    Promise.prototype.reject = function() {
         if(this.state) return;
 
         this.state = REJECTED;
