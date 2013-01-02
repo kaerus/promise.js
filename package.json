@@ -1,0 +1,33 @@
+{
+  "name": "promise",
+  "version": "0.1.0",
+  "description": "A+ compliant promise module",
+  "keywords": [
+    "promise",
+    "amd"
+  ],
+  "author": { 
+    "name": "Kaerus",
+    "email": "contact@kaerus.com",
+    "web": "http://kaerus.com"
+  },
+  "contributors": [
+    "anders elo <anders@kaerus.com>"
+  ],
+  "dependencies": {
+    "amdefine": ">=0.0.2"
+  },
+  "devDependencies": {
+    "requirejs":">=2.0.6",
+    "promises-aplus-tests":">=1.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/kaerus/promise.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kaerus/promise.js"
+  },
+  "main": "promise.js",
+  "license": "APACHE2_0"
+}
