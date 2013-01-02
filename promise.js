@@ -62,10 +62,10 @@ define(function (require) {
                     });
 
                     continue;
-                } else if(value !== undefined) {
+                } else {
                     value = [value]; 
                     state = FULFILLED;
-                } else value = this.resolved;  
+                }  
             }
             promise.state = state;
             promise.resolved = value;
