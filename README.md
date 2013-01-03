@@ -49,7 +49,7 @@ promise.then(function(value){
 	console.log("value:", value);
 }).then(undefined,function(error){
 	/* catch thrown error here */
-	console.log("Error:", error);
+	console.log(error);
 });
 
 /* fulfill with a random value */
@@ -67,20 +67,25 @@ function onSubmit(){
 
 /* Reject the promise on cancel */
 function onCancel(){
-	promise.reject("Aborted by user");
+	promise.reject("Aborted");
 }
 
 /* setup the response chain */
 promise.then(function(url) {
-	/* returns a new promise */
-	return getAjax(url); 
+	var ajaxedPromise = getAjax(url);
+
+	return ajaxedPromise.then(function(data){
+		return data;
+	},function(error){
+		return "Failed to fetch content";
+	});
 }).then(function(response){
 	/* put response into DOM */
 	var e = getElementById('content');
 	e.innerHTML = response;
 },function(error){
-	/* if rejected from either onCancel or getAjax */
-	/* or thrown error, we catch the reason here.  */
+	/* if rejected from either onCancel */
+	/* or thrown error, we end up here. */
 	var e = getElementById('error-message');
 	e.innerHTML = error.message;
 });
