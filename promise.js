@@ -63,8 +63,8 @@ define(function (require) {
 
                     continue;
                 } else {
-                    value = [].concat(value); 
                     state = FULFILLED;
+                    value = [].concat(value);
                 }  
             }
             promise.state = state;
