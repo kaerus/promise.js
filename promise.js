@@ -63,7 +63,7 @@ define(function (require) {
 
                     continue;
                 } else {
-                    value = [value]; 
+                    value = [].concat(value); 
                     state = FULFILLED;
                 }  
             }
