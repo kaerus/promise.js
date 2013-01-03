@@ -14,6 +14,7 @@ Main features
 * Small footprint: 600 bytes compressed / 1400 bytes minified.
 * Simple design: easy to understand, intergrate & debug.
 * Runtime independent: Can be loaded as an AMD or CommonJS module. 
+* Resolves multiple values: Fulfillments & rejections can yield more than one value.
 
 Install
 =======
