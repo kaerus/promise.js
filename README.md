@@ -5,8 +5,7 @@
 
 Promise.js
 ==========
-A Promises/A+ library with small a footprint optimized for frequent access.
-Originally developed for the <a href="https://github.com/kaerus/arango-client">arango-client</a> library.   
+A Promises/A+ framework with small a footprint, originally developed for the <a href="https://github.com/kaerus/arango-client">ArangoDB client</a> library. 
 
 Main features
 -------------
