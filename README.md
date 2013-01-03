@@ -12,7 +12,7 @@ Main features
 -------------
 * Conforming to the Promises/A+ specification: passing all tests.
 * Small footprint: 600 bytes compressed / 1400 bytes minified.
-* Simple design: easy to understand, integrate & debug.
+* Simple design: easy to understand, intergrate & debug.
 * Runtime independent: Can be loaded as an AMD or CommonJS module. 
 
 Install
