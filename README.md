@@ -6,7 +6,7 @@
 Promise.js
 ==========
 A Promises/A+ library with small a footprint optimized for frequent access.
-Developed mainly for the [https://github.com/kaerus/arango-client arango-client] project.   
+Originally developed for the <a href="https://github.com/kaerus/arango-client">arango-client</a> library.   
 
 Main features
 -------------
@@ -18,13 +18,15 @@ Main features
 Install
 =======
 Include the promise.js file into your project using an AMD compatible loader.
-You need to have ```amdefine``` to be able to require the module as a CommmonJS module in node.js. 
+You need to have ```amdefine``` to be able to require it as a CommmonJS module in node.js. 
 A minified built file is included in dist/promise.js.
 
 Usage
 =====
 ```Javascript
-/* run an asynchronous process that returns a promise */
+/* Run an asynchronous process that returns a promise.   */
+/* Note: The promise doesn't have to originate from this */
+/* library as long as it is Promises/A+ compliant....... */
 promise = getAjax("http://some.host.com/data");
 
 /* When the response arives, it calls either */
@@ -34,8 +36,9 @@ promise.then(function(value){
 },function(reason){
 	console.log("rejected:", reason);
 });
+```
 
-
+```javascript
 /* chaining promises, (undefined blocks are ignored) */
 promise = new Promise();
 
@@ -51,8 +54,9 @@ promise.then(function(value){
 
 /* fulfill with a random value */
 promise.fulfill(Math.floor(Math.random()*10));
+```
 
-
+```javascript
 /* promises can only be fulfilled/rejected once */
 var promise = new Promise();
 
@@ -80,15 +84,14 @@ promise.then(function(url) {
 	var e = getElementById('error-message');
 	e.innerHTML = error.message;
 });
-
+```
+```javascript
 /* This Promise library supports multiple fulfillment values (not only one) */
 promise().fulfill("abc",123,{abc:123}).then(function(a,b,c) {
 	console.log("a(%s) b(%s) c(%s)", a, b, c);
 });
 
-
 ```
-
 
 
 Test & build
