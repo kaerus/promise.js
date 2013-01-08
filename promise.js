@@ -42,7 +42,7 @@ define(function (require) {
             state = this.state,
             value = this.resolved;  
 
-        while(then = this.on.shift()) {
+        while(then = this.calls.shift()) {
             promise = then[PROMISE];
 
             if(typeof then[this.state] === 'function') {
@@ -69,16 +69,16 @@ define(function (require) {
             }
             promise.state = state;
             promise.resolved = value;
-            if(promise.on) promise.resolve();
+            if(promise.calls) promise.resolve();
         }
     }       
 
     Promise.prototype.then = function(onFulfill,onReject) {
         var self = this, promise = new Promise();
 
-        if(!this.on) this.on = [];   
+        if(!this.calls) this.calls = [];   
 
-        this.on[this.on.length] = [promise, onFulfill, onReject];
+        this.calls[this.calls.length] = [promise, onFulfill, onReject];
 
         if(this.resolved) {
             setImmediate(function(){
@@ -95,7 +95,7 @@ define(function (require) {
         this.state = FULFILLED;
         this.resolved = arguments;
 
-        if(this.on) this.resolve();
+        if(this.calls) this.resolve();
 
         return this;
     }
@@ -106,7 +106,7 @@ define(function (require) {
         this.state = REJECTED;
         this.resolved = arguments;
 
-        if(this.on) this.resolve();   
+        if(this.calls) this.resolve();   
 
         return this;        
     }
