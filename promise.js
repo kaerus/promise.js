@@ -30,7 +30,7 @@ define(function (require) {
         }    
     }
 
-    var PROMISE = 0, FULFILLED = 1, REJECTED = 2;
+    var PENDING = 0, FULFILLED = 1, REJECTED = 2;
 
     function Promise() {
         if(!(this instanceof Promise))
@@ -43,35 +43,34 @@ define(function (require) {
             value = this.resolved;  
 
         while(then = this.calls.shift()) {
-            promise = then[PROMISE];
+            promise = then[PENDING];
 
             if(typeof then[this.state] === 'function') {
                 try {
-                    value = then[this.state].apply(null,this.resolved);  
+                    value = then[this.state](this.resolved);  
                 } catch(e) {
                     promise.reject(e); 
 
                     continue;   
-                }
+                }    
 
                 if(value instanceof Promise || (value && value.then) )  {
-                    value.then(function(){
-                        promise.fulfill.apply(promise,arguments); 
-                    }, function(){
-                        promise.reject.apply(promise,arguments);
+                    value.then(function(v){
+                        promise.fulfill(v); 
+                    }, function(r){
+                        promise.reject(r);
                     });
 
                     continue;
                 } else {
                     state = FULFILLED;
-                    value = [].concat(value);
                 }  
             }
             promise.state = state;
             promise.resolved = value;
             if(promise.calls) promise.resolve();
         }
-    }       
+    } 
 
     Promise.prototype.then = function(onFulfill,onReject) {
         var self = this, promise = new Promise();
@@ -89,22 +88,38 @@ define(function (require) {
         return promise;
     }
 
-    Promise.prototype.fulfill = function() {
+    Promise.prototype.spread = function(onFulfill,onReject) {
+
+        function spreadFulfill(value) {
+            if(!Object.prototype.toString.call(value) === '[object Array]') 
+                value = [value];
+
+            return onFulfill.apply(null,value);
+        }   
+
+        return this.then(spreadFulfill,onReject);
+    }
+
+    Promise.prototype.fulfill = function(value) {
         if(this.state) return;
+        /* Constructs an array of fulfillment values */
+        /* if more than one argument was provided... */
+        if(arguments.length > 1) 
+            value = Array.prototype.slice.call(arguments);
 
         this.state = FULFILLED;
-        this.resolved = arguments;
+        this.resolved = value;
 
         if(this.calls) this.resolve();
 
         return this;
     }
 
-    Promise.prototype.reject = function() {
+    Promise.prototype.reject = function(reason) {
         if(this.state) return;
 
         this.state = REJECTED;
-        this.resolved = arguments;
+        this.resolved = reason;
 
         if(this.calls) this.resolve();   
 

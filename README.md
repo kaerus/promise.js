@@ -10,10 +10,10 @@ A Promises/A+ framework with small a footprint, originally developed for the <a 
 Main features
 -------------
 * Conforming to the Promises/A+ specification: passing all tests.
-* Small footprint: 600 bytes compressed / 1400 bytes minified.
-* Simple design: easy to understand, intergrate & debug.
+* Tiny footprint: 650 bytes compressed / 1500 bytes minified.
+* Simple design: optimzed for performance, easy to understand, integrate & debug.
 * Runtime independent: Can be loaded as an AMD or CommonJS module. 
-* Resolves multiple values: Fulfillments & rejections can yield more than one value.
+* Multiple fulfillment values: Use spread() to deconstruct.
 
 Install
 =======
@@ -91,8 +91,8 @@ promise.then(function(url) {
 });
 ```
 ```javascript
-/* This Promise library supports multiple fulfillment values (not only one) */
-promise().fulfill("abc",123,{abc:123}).then(function(a,b,c) {
+/* Multiple fulfillment values, decomposed with spread */
+promise().fulfill("abc",123,{abc:123}).spread(function(a,b,c) {
 	console.log("a(%s) b(%s) c(%s)", a, b, c);
 });
 
