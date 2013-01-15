@@ -9,7 +9,7 @@ A Promises/A+ framework with small a footprint, originally developed for the <a 
 
 Main features
 -------------
-* Conforming to the Promises/A+ specification: passing all tests.
+* Conforming to the Promises/A+ specification: passing v1.1.0 tests.
 * Tiny footprint: 650 bytes compressed / 1500 bytes minified.
 * Simple design: optimzed for performance, easy to understand, integrate & debug.
 * Runtime independent: Can be loaded as an AMD or CommonJS module. 
