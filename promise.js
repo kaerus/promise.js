@@ -54,7 +54,7 @@ define(function (require) {
                     continue;   
                 }    
 
-                if(value instanceof Promise || (value && value.then) )  {
+                if(value instanceof Promise || (value && typeof value.then === 'function') )  {
                     value.then(function(v){
                         promise.fulfill(v); 
                     }, function(r){
