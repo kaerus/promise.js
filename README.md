@@ -5,15 +5,15 @@
 
 Promise.js
 ==========
-A Promises/A+ framework with small a footprint, originally developed for the <a href="https://github.com/kaerus/arango-client">ArangoDB client</a> library. 
+A Promises/A+ library, originally developed for the <a href="https://github.com/kaerus/arango-client">ArangoDB client</a>. 
 
 Main features
 -------------
 * Conforming to the Promises/A+ specification: passing v1.1.0 tests.
 * Tiny footprint: 650 bytes compressed / 1500 bytes minified.
-* Simple design: optimzed for performance, easy to understand, integrate & debug.
+* Simple design: fast, easy to understand, integrate & debug.
 * Runtime independent: Can be loaded as an AMD or CommonJS module. 
-* Multiple fulfillment values: Use spread() to deconstruct.
+* Flexible fulfillments: Allows multiple fulfillment values catched with then(value) or spread(arguments).
 
 Install
 =======
@@ -70,7 +70,7 @@ function onCancel(){
 	promise.reject("Aborted");
 }
 
-/* setup the response chain */
+/* setup the resolver chain */
 promise.then(function(url) {
 	var ajaxedPromise = getAjax(url);
 
@@ -90,11 +90,23 @@ promise.then(function(url) {
 	e.innerHTML = error.message;
 });
 ```
+
 ```javascript
-/* Multiple fulfillment values, decomposed with spread */
+/* Multiple fulfillment values can be placed inside an array */
+promise().fulfill([1,2,3]).then(function(value) {
+	console.log("a(%s) b(%s) c(%s)", value[0], value[1], value[2]);
+});
+
+/* Use spread() to receive the individual elements as arguments */
+promise().fulfill([1,2,3]).spread(function(a,b,c) {
+	console.log("a(%s) b(%s) c(%s)", a, b, c);
+});
+
+/* You can also fulfill with multiple fullfilment arguments. */
 promise().fulfill("abc",123,{abc:123}).spread(function(a,b,c) {
 	console.log("a(%s) b(%s) c(%s)", a, b, c);
 });
+
 
 ```
 
