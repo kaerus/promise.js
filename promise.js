@@ -15,121 +15,124 @@
  */
 
 
-/* exports AMD / CommonJS module or as a global Promise() */
 (function (global) {
-    if (typeof exports === 'object') {
+
+    /* exports AMD, CommonJS module or a global Promise() */    
+    if (typeof exports === 'object') {  
         module.exports = Promise;
     } else if (typeof define === 'function' && define.amd) {
         define(function () { return Promise; });
     } else { global.Promise = Promise; }
-}(this));
 
-/* setImmediate shim */
-if(typeof setImmediate !== 'function') {
-    if(typeof process !== 'undefined' && process && typeof process.nextTick === 'function') {
-        setImmediate = process.nextTick;
-    } else if (typeof MessageChannel !== "undefined") {
-        var fifo = [], channel = new MessageChannel();
-        channel.port1.onmessage = function () { fifo.shift()() };
-        setImmediate = function (task) { fifo[fifo.length] = task; channel.port2.postMessage(); };
-    } else {
-        setImmediate = setTimeout;
-    }    
-}
 
-var PENDING = 0, FULFILLED = 1, REJECTED = 2;
-
-function Promise() {
-    if(!(this instanceof Promise))
-        return new Promise;
-}
-
-Promise.prototype.resolve = function() {
-    var then, promise,
-        state = this.state,
-        value = this.resolved;  
-
-    while(then = this.calls.shift()) {
-        promise = then[PENDING];
-
-        if(typeof then[this.state] === 'function') {
-            try {
-                value = then[this.state](this.resolved);  
-            } catch(e) {
-                promise.reject(e); 
-
-                continue;   
-            }    
-
-            if(value instanceof Promise || (value && typeof value.then === 'function') )  {
-                value.then(function(v){
-                    promise.fulfill(v); 
-                }, function(r){
-                    promise.reject(r);
-                });
-
-                continue;
-            } else {
-                state = FULFILLED;
-            }  
-        }
-        promise.state = state;
-        promise.resolved = value;
-        if(promise.calls) promise.resolve();
+    /* setImmediate shim */
+    if(typeof setImmediate !== 'function') {
+        if(typeof process !== 'undefined' && process && typeof process.nextTick === 'function') {
+            setImmediate = process.nextTick;
+        } else if (typeof MessageChannel !== "undefined") {
+            var fifo = [], channel = new MessageChannel();
+            channel.port1.onmessage = function () { fifo.shift()() };
+            setImmediate = function (task) { fifo[fifo.length] = task; channel.port2.postMessage(); };
+        } else {
+            setImmediate = setTimeout;
+        }    
     }
-} 
 
-Promise.prototype.then = function(onFulfill,onReject) {
-    var self = this, promise = new Promise();
+    var PENDING = 0, FULFILLED = 1, REJECTED = 2;
 
-    if(!this.calls) this.calls = [];   
+    function Promise() {
+        if(!(this instanceof Promise))
+            return new Promise;
+    }
 
-    this.calls[this.calls.length] = [promise, onFulfill, onReject];
+    Promise.prototype.resolve = function() {
+        var then, promise,
+            state = this.state,
+            value = this.resolved;  
 
-    if(this.resolved) {
-        setImmediate(function(){
-            self.resolve();
-        });
-    }  
+        while(then = this.calls.shift()) {
+            promise = then[PENDING];
 
-    return promise;
-}
+            if(typeof then[this.state] === 'function') {
+                try {
+                    value = then[this.state](this.resolved);  
+                } catch(e) {
+                    promise.reject(e); 
 
-Promise.prototype.spread = function(onFulfill,onReject) {
+                    continue;   
+                }    
 
-    function spreadFulfill(value) {
-        if(!Object.prototype.toString.call(value) === '[object Array]') 
-            value = [value];
+                if(value instanceof Promise || (value && typeof value.then === 'function') )  {
+                    value.then(function(v){
+                        promise.fulfill(v); 
+                    }, function(r){
+                        promise.reject(r);
+                    });
 
-        return onFulfill.apply(null,value);
-    }   
+                    continue;
+                } else {
+                    state = FULFILLED;
+                }  
+            }
+            promise.state = state;
+            promise.resolved = value;
+            if(promise.calls) promise.resolve();
+        }
+    } 
 
-    return this.then(spreadFulfill,onReject);
-}
+    Promise.prototype.then = function(onFulfill,onReject) {
+        var self = this, promise = new Promise();
 
-Promise.prototype.fulfill = function(value) {
-    if(this.state) return;
-    /* Constructs an array of fulfillment values */
-    /* if more than one argument was provided... */
-    if(arguments.length > 1) 
-        value = Array.prototype.slice.call(arguments);
+        if(!this.calls) this.calls = [];   
 
-    this.state = FULFILLED;
-    this.resolved = value;
+        this.calls[this.calls.length] = [promise, onFulfill, onReject];
 
-    if(this.calls) this.resolve();
+        if(this.resolved) {
+            setImmediate(function(){
+                self.resolve();
+            });
+        }  
 
-    return this;
-}
+        return promise;
+    }
 
-Promise.prototype.reject = function(reason) {
-    if(this.state) return;
+    Promise.prototype.spread = function(onFulfill,onReject) {
 
-    this.state = REJECTED;
-    this.resolved = reason;
+        function spreadFulfill(value) {
+            if(!Object.prototype.toString.call(value) === '[object Array]') 
+                value = [value];
 
-    if(this.calls) this.resolve();   
+            return onFulfill.apply(null,value);
+        }   
 
-    return this;        
-}
+        return this.then(spreadFulfill,onReject);
+    }
+
+    Promise.prototype.fulfill = function(value) {
+        if(this.state) return;
+        /* Constructs an array of fulfillment values */
+        /* if more than one argument was provided... */
+        if(arguments.length > 1) 
+            value = Array.prototype.slice.call(arguments);
+
+        this.state = FULFILLED;
+        this.resolved = value;
+
+        if(this.calls) this.resolve();
+
+        return this;
+    }
+
+    Promise.prototype.reject = function(reason) {
+        if(this.state) return;
+
+        this.state = REJECTED;
+        this.resolved = reason;
+
+        if(this.calls) this.resolve();   
+
+        return this;        
+    }
+
+}(this));
 
