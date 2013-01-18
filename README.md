@@ -10,16 +10,16 @@ A Promises/A+ library, originally developed for the <a href="https://github.com/
 Main features
 -------------
 * Conforming to the Promises/A+ specification: passing v1.1.0 tests.
-* Tiny footprint: 650 bytes compressed / 1500 bytes minified.
+* Tiny footprint: No dependencies, 650 bytes compressed or 1500 bytes minified.
 * Simple design: fast, easy to understand, integrate & debug.
 * Runtime independent: Can be loaded as an AMD or CommonJS module. 
 * Flexible fulfillments: Allows multiple fulfillment values catched with then(value) or spread(arguments).
 
 Install
 =======
-Include the promise.js file into your project using an AMD compatible loader.
-You need to have ```amdefine``` to be able to require it as a CommmonJS module in node.js. 
-A minified built file is included in dist/promise.js.
+Include this promise.js library into your project using an AMD or CommonJS module loader.
+Without any loader the library gets exported as a global Promise constructor.
+A minified built file of the library is included in dist/promise.js.
 
 Usage
 =====

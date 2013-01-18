@@ -1,6 +1,6 @@
 {
   "name": "promise",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A+ compliant promise module",
   "keywords": [
     "promise",
@@ -14,11 +14,7 @@
   "contributors": [
     "anders elo <anders@kaerus.com>"
   ],
-  "dependencies": {
-    "amdefine": ">=0.0.2"
-  },
   "devDependencies": {
-    "requirejs":">=2.0.6",
     "promises-aplus-tests":">=1.0.0"
   },
   "bugs": {
