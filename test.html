@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+	<head><title>Promise</title>
+		<script src="./promise.js"></script>
+	</head>
+<body>
+	<h1 id="h1"></h1>
+	<h2 id="h2"></h2>
+	<h2 id="h3"></h2>
+	<script>
+		document.getElementById('h1').innerHTML = "Fulfill a promise";
+
+		Promise().fulfill("Hello").then(function(a){
+			var doc = document.getElementById('h2');
+			doc.innerHTML = a;
+			return "World!";
+		}).then(function(b){
+			var doc = document.getElementById('h3');
+			doc.innerHTML = b;
+		});
+	</script>
+</body>
+</html>
