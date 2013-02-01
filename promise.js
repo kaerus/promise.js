@@ -134,19 +134,45 @@
         return this;        
     }
 
-    /* Helper for deferring synchronous calls */
-    /* fulfilled or rejected in function body.*/
-    Promise.prototype.defer = function(func) {
-        var self = this;
-        setImmediate(function(){
-            try {
-                func.call(self);
-            } catch (e) {
-                self.reject(e);
-            }
-        });
-        return this;    
-    }
+    Promise.prototype.when = function(task) {
+        var last = promise = this, values = [];
+
+        /* Single task, defer and return this promise */
+        if(typeof task === 'function') return defer(this,task);
+
+        /* Helper for deferring a function/process */
+        function defer(promise,func) {
+            var value;
+
+            setImmediate(function(){
+                try {
+                    value = func.call(promise);
+                    /* func can resolve the promise itself */
+                    /* in which case fullfill gets ignored */
+                    promise.fulfill(value);
+                } catch (e) {
+                    promise.reject(e);
+                }
+            });
+            return promise;    
+        }
+
+        function deferred(promised,i) {
+            /* defer and collect the return value */
+            defer(promised,task[i]).then(function(v) {
+                values[i] = v; 
+            });
+
+            return function(){return promised}
+        }
+
+        for(var i = 0; i < task.length; i++) {
+            promise = last;
+            last = promise.then(deferred(promise,i));
+        }
+        /* return the collected fulfillment values */
+        return promise.then(function(){return values});
+    } 
 
 }(this));
 
