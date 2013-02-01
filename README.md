@@ -14,7 +14,7 @@ Main features
 * Simple design: fast, easy to understand, integrate & debug.
 * Runtime independent: Can be loaded as an AMD or CommonJS module. 
 * Flexible fulfillments: Allows multiple fulfillment values catched with then(value) or spread(arguments).
-* Defered processes: Use when(task) to wrap one or several tasks into a returned promise. 
+* Whenable promises: Use when(task) to bundle one or several functions/promises into a single promise. 
 
 Install
 =======
@@ -156,16 +156,15 @@ var deferred = Promise().when(function(){
 /* Process the result whenever its ready */
 deferred.then(...);
 ```
-You may also wrap a promise around multiple tasks.
+You may also wrap a promise around multiple functions or promises.
 ```
 var tasks = [];
-tasks.push(someTask);
-tasks.push(anotherOne);
-tasks.push(oneMore);
+tasks.push(someFunction);
+tasks.push(somePromise);
 Promise().when(tasks).then(function(values){
 	console.log("Tasks returned", values);
 }, function(error){
-	console.log("Task error", error);
+	console.log("Tasks failed", error);
 });
 ```
 

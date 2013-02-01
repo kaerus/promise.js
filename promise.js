@@ -138,27 +138,36 @@
         var last = promise = this, values = [];
 
         /* Single task, defer and return this promise */
-        if(typeof task === 'function') return defer(this,task);
-
+        if(!Object.prototype.toString.call(task) === '[object Array]') 
+            return defer(this,task);
+        
         /* Helper for deferring a function/process */
-        function defer(promise,func) {
+        function defer(promise,proc) {
             var value;
-
-            setImmediate(function(){
-                try {
-                    value = func.call(promise);
-                    /* func can resolve the promise itself */
-                    /* in which case fullfill gets ignored */
+            if(proc instanceof Promise || (proc && typeof proc.then === 'function')){
+                /* If proc is a promise, then wait for fulfillment */
+                proc.then(function(value) {
                     promise.fulfill(value);
-                } catch (e) {
-                    promise.reject(e);
-                }
-            });
+                }, function(reason) {
+                    promise.reject(reason);
+                });
+            } else {
+                setImmediate(function(){
+                    try {
+                        value = proc.call(promise);
+                        /* proc can resolve the promise itself */
+                        /* in which case fullfill gets ignored */
+                        promise.fulfill(value);
+                    } catch (e) {
+                        promise.reject(e);
+                    }
+                });
+            }    
+            
             return promise;    
         }
 
         function deferred(promised,i) {
-            /* defer and collect the return value */
             defer(promised,task[i]).then(function(v) {
                 values[i] = v; 
             });
