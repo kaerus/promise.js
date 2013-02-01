@@ -50,19 +50,59 @@ Example a simple webpage using promises.
 </html>
 ```
 
-```Javascript
-/* Run an asynchronous process that returns a promise.   */
-/* Note: The promise doesn't have to originate from this */
-/* library as long as it is Promises/A+ compliant....... */
-promise = getAjax("http://some.host.com/data");
+Example of how to wrap a promise around an asynchronous process.
+```
+<!doctype html>
+<html>
+    <head><title>Promise</title>
+        <script src="./promise.js"></script>
+    </head>
+<body>
+    <h1 id="h1"></h1>
+    <h2 id="h2"></h2>
+    <div id="content"></div>
+    <script>
+        document.getElementById('h1').innerHTML = "Ajaxed promise";
+        function getAjax(url) {
+        	var promise = new Promise(),
+        		xhr = new XMLHttpRequest, timer;
 
-/* When the response arives, it calls either */
-/* the fulfilled block or the rejected block.*/
-promise.then(function(value){
-	console.log("fulfilled:", value);
-},function(reason){
-	console.log("rejected:", reason);
-});
+            /* This will be called after getAjax(...) returns */
+            xhr.onreadystatechange = function() {
+            	if(xhr.readyState === 4 && xhr.status) {
+            		clearTimeout(timer);
+            		if(xhr.status > 399) promise.reject(xhr.statusText);
+                    else promise.fulfill(xhr.responseText);   	
+            	}
+            }
+
+            /* send an asynchronous XmlHttp GET request */
+            xhr.open("GET",url,true);
+            xhr.send(null);
+
+            /* set a timeout that fires after 5 secs */
+            timer = setTimeout(function() { 
+                xhr.abort();
+                promise.reject("operation timedout!"); 
+            },5000);
+
+            /* return this promise */
+        	return promise;
+        }
+
+        /* When the response arives it calls either the fulfilled block or the rejected block. */
+        getAjax("http://earthquake.usgs.gov/earthquakes/feed/geojson/significant/month").then(function(value){
+            /* validates JSON data */
+            var data = JSON.parse(value);
+        	document.getElementById('h2').innerHTML = "Fulfilled";
+            document.getElementById('content').innerHTML = JSON.stringify(data);
+        },function(reason){
+        	document.getElementById('h2').innerHTML = "Rejected";
+            document.getElementById('content').innerHTML = reason;
+        });
+    </script>
+</body>
+</html>
 ```
 
 ```javascript
@@ -83,40 +123,6 @@ promise.then(function(value){
 promise.fulfill(Math.floor(Math.random()*10));
 ```
 
-```javascript
-/* promises can only be fulfilled/rejected once */
-var promise = new Promise();
-
-/* fulfill a promise with a submitted form value */
-function onSubmit(){
-	promise.fulfill(getElementById("formInput").val());
-}
-
-/* Reject the promise on cancel */
-function onCancel(){
-	promise.reject("Aborted");
-}
-
-/* setup the resolver chain */
-promise.then(function(url) {
-	var ajaxedPromise = getAjax(url);
-
-	return ajaxedPromise.then(function(data){
-		return data;
-	},function(error){
-		return "Failed to fetch content";
-	});
-}).then(function(response){
-	/* put response into DOM */
-	var e = getElementById('content');
-	e.innerHTML = response;
-},function(error){
-	/* if rejected from either onCancel */
-	/* or thrown error, we end up here. */
-	var e = getElementById('error-message');
-	e.innerHTML = error.message;
-});
-```
 
 ```javascript
 /* Multiple fulfillment values can be placed inside an array */
