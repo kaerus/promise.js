@@ -134,5 +134,19 @@
         return this;        
     }
 
+    /* Helper for deferring synchronous calls */
+    /* fulfilled or rejected in function body.*/
+    Promise.prototype.defer = function(func) {
+        var self = this;
+        setImmediate(function(){
+            try {
+                func.call(self);
+            } catch (e) {
+                self.reject(e);
+            }
+        });
+        return this;    
+    }
+
 }(this));
 
