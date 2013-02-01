@@ -14,6 +14,7 @@ Main features
 * Simple design: fast, easy to understand, integrate & debug.
 * Runtime independent: Can be loaded as an AMD or CommonJS module. 
 * Flexible fulfillments: Allows multiple fulfillment values catched with then(value) or spread(arguments).
+* Defered processes: Use when(task) to wrap one or several tasks into a returned promise. 
 
 Install
 =======
@@ -144,7 +145,7 @@ promise().fulfill("abc",123,{abc:123}).spread(function(a,b,c) {
 
 Example how to defer a synchronous process
 ```
-var deferred = Promise().defer(function(){
+var deferred = Promise().when(function(){
 	var retval = syncProc();
 	/* if syncProc() throws the error will */
 	/* end up in the rejection handler.    */
@@ -154,6 +155,18 @@ var deferred = Promise().defer(function(){
 
 /* Process the result whenever its ready */
 deferred.then(...);
+```
+You may also wrap a promise around multiple tasks.
+```
+var tasks = [];
+tasks.push(someTask);
+tasks.push(anotherOne);
+tasks.push(oneMore);
+Promise().when(tasks).then(function(values){
+	console.log("Tasks returned", values);
+}, function(error){
+	console.log("Task error", error);
+});
 ```
 
 Test & build
