@@ -140,9 +140,19 @@ promise().fulfill("abc",123,{abc:123}).spread(function(a,b,c) {
 	console.log("a(%s) b(%s) c(%s)", a, b, c);
 });
 
-
 ```
 
+Example how to defer a synchronous process
+```
+var deferred = Promise().defer(function(){
+	var retval = asynProcess();
+	if(retval) this.fulfill(retval);
+	else this.reject("Operation failed");
+});
+
+/* Process the result whenever its ready */
+deferred.then(...);
+```
 
 Test & build
 ============
