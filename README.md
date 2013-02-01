@@ -145,7 +145,9 @@ promise().fulfill("abc",123,{abc:123}).spread(function(a,b,c) {
 Example how to defer a synchronous process
 ```
 var deferred = Promise().defer(function(){
-	var retval = asynProcess();
+	var retval = syncProc();
+	/* if syncProc() throws the error will */
+	/* end up in the rejection handler.    */
 	if(retval) this.fulfill(retval);
 	else this.reject("Operation failed");
 });
