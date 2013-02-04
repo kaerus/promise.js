@@ -99,7 +99,7 @@
     Promise.prototype.spread = function(onFulfill,onReject) {
 
         function spreadFulfill(value) {
-            if(!Object.prototype.toString.call(value) === '[object Array]') 
+            if(!Array.isArray(value)) 
                 value = [value];
 
             return onFulfill.apply(null,value);
@@ -113,7 +113,7 @@
         /* Constructs an array of fulfillment values */
         /* if more than one argument was provided... */
         if(arguments.length > 1) 
-            value = Array.prototype.slice.call(arguments);
+            value = [].slice.call(arguments);
 
         this.state = FULFILLED;
         this.resolved = value;
@@ -137,8 +137,8 @@
     Promise.prototype.when = function(task) {
         var last = promise = this, values = [];
 
-        /* Single task, defer and return this promise */
-        if(!Object.prototype.toString.call(task) === '[object Array]') 
+        /* Single task */
+        if(!Array.isArray(task)) 
             return defer(this,task);
         
         /* Helper for deferring a function/process */
