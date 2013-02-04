@@ -9,17 +9,18 @@ A Promises/A+ library, originally developed for the <a href="https://github.com/
 
 Main features
 -------------
-* Conforming to the Promises/A+ specification: passing v1.1.0 tests.
-* Tiny footprint: No dependencies, 650 bytes compressed or 1500 bytes minified.
-* Simple design: fast, easy to understand, integrate & debug.
-* Runtime independent: Can be loaded as an AMD or CommonJS module. 
-* Flexible fulfillments: Allows multiple fulfillment values catched with then(value) or spread(arguments).
-* Whenable promises: Use when(task) to bundle one or several functions/promises into a single promise. 
+* Conforming to the Promises/A+ specification.
+* Small footprint, no other dependencies or frameworks.
+* Simple design, fast, easy to understand, integrate & debug.
+* Runtime independent so that it works in browsers, nodejs and perhaps even in rhino. 
+* Supports CommonJS and AMD loaders, or exports a global Promise(). 
+* Flexible fulfillments that allows multiple fulfillment values catched with then(value) or spread(arguments).
+* Easy to create promised wrappers by using when(task) to bundle functions/processes into a promise. 
 
 Install
 =======
 Include this promise.js library into your project using an AMD or CommonJS module loader.
-Without any loader the library gets exported as a global Promise constructor.
+Without any loader the library gets exported as a global Promise().
 A minified built file of the library is included in dist/promise.js.
 
 Usage

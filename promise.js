@@ -16,26 +16,31 @@
 
 
 (function (global) {
+    "use strict"
 
     /* exports AMD, CommonJS module or a global Promise() */    
     if (typeof exports === 'object') {  
         module.exports = Promise;
     } else if (typeof define === 'function' && define.amd) {
         define(function () { return Promise; });
-    } else { global.Promise = Promise; }
+    } else if(typeof global === 'object') {
+        global.Promise = Promise; 
+    } else throw "Unable to export Promise";
 
 
     /* setImmediate shim */
-    if(typeof setImmediate !== 'function') {
-        if(typeof process !== 'undefined' && process && typeof process.nextTick === 'function') {
-            setImmediate = process.nextTick;
-        } else if (typeof MessageChannel !== "undefined") {
-            var fifo = [], channel = new MessageChannel();
+    if(typeof global.setImmediate !== 'function') {
+        if(typeof global.process !== 'undefined' && global.process && typeof global.process.nextTick === 'function') {
+            global.setImmediate = global.process.nextTick;
+        } else if(global.vertx && typeof global.vertx.runOnLoop === 'function') {
+            global.setImmediate = global.vertx.runOnLoop;     
+        } else if(typeof global.MessageChannel !== "undefined") {
+            var fifo = [], channel = new global.MessageChannel();
             channel.port1.onmessage = function () { fifo.shift()() };
-            setImmediate = function (task) { fifo[fifo.length] = task; channel.port2.postMessage(); };
-        } else {
-            setImmediate = setTimeout;
-        }    
+            global.setImmediate = function (task) { fifo[fifo.length] = task; channel.port2.postMessage(); };
+        } else if(typeof global.setTimeout === 'function') {
+            global.setImmediate = global.setTimeout;
+        } else throw "No candidate for setImmediate";   
     }
 
     var PENDING = 0, FULFILLED = 1, REJECTED = 2;
@@ -88,7 +93,7 @@
         this.calls[this.calls.length] = [promise, onFulfill, onReject];
 
         if(this.resolved) {
-            setImmediate(function(){
+            global.setImmediate(function(){
                 self.resolve();
             });
         }  
@@ -152,7 +157,7 @@
                     promise.reject(reason);
                 });
             } else {
-                setImmediate(function(){
+                global.setImmediate(function(){
                     try {
                         value = proc.call(promise);
                         /* proc can resolve the promise itself */
@@ -183,5 +188,5 @@
         return promise.then(function(){return values});
     } 
 
-}(this));
+}(global||window||this));
 
