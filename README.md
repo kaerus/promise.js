@@ -2,7 +2,7 @@
     <img src="http://promises-aplus.github.com/promises-spec/assets/logo-small.png"
          align="right" alt="Promises/A+ logo" />
 </a>
-[![build status](https://secure.travis-ci.org/kaerus/promise.js)](http://travis-ci.org/kaerus/promise.js)
+[![Build Status](https://travis-ci.org/kaerus/kaerus.js.png)](https://travis-ci.org/kaerus/promise.js)
 Promise.js
 ==========
 A Promises/A+ library, originally developed for the <a href="https://github.com/kaerus/arango-client">ArangoDB client</a>. 
