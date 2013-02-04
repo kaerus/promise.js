@@ -51,7 +51,7 @@ Example a simple webpage using promises.
 </html>
 ```
 
-Example of how to wrap a promise around an asynchronous process.
+Example of how to use promises for Ajax.
 ```
 <!doctype html>
 <html>
@@ -143,18 +143,17 @@ promise().fulfill("abc",123,{abc:123}).spread(function(a,b,c) {
 
 ```
 
-Example how to defer a synchronous process
+Example how to create a promise around a process making it run asynchronously in your code.
 ```
-var deferred = Promise().when(function(){
+var promisedSync = Promise().when(function(){
 	var retval = syncProc();
 	/* if syncProc() throws the error will */
 	/* end up in the rejection handler.    */
 	if(retval) this.fulfill(retval);
 	else this.reject("Operation failed");
 });
-
 /* Process the result whenever its ready */
-deferred.then(...);
+promisedSync.then(...);
 ```
 You may also wrap a promise around multiple functions or promises.
 ```
