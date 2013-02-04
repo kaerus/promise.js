@@ -1,6 +1,6 @@
 {
   "name": "promise",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A+ compliant promise module",
   "keywords": [
     "promise",
@@ -23,6 +23,9 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/kaerus/promise.js"
+  },
+  "scripts": {
+    "test":"make"
   },
   "main": "promise.js",
   "license": "APACHE2_0"
