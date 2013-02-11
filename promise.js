@@ -140,7 +140,7 @@
     }
 
     Promise.prototype.when = function(task) {
-        var last = promise = this, values = [];
+        var promise, last = promise = this, values = [];
 
         /* Single task */
         if(!Array.isArray(task)) 
