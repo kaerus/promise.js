@@ -20,7 +20,10 @@
 
     /* exports AMD, CommonJS module or a global Promise() */    
     if (typeof exports === 'object') {  
-        module.exports = Promise;
+        if (typeof module !== undefined && module.exports) {
+            exports = module.exports = Promise;
+        }
+        exports.Promise = Promise;
     } else if (typeof define === 'function' && define.amd) {
         define(function () { return Promise; });
     } else if(typeof global === 'object') {
@@ -187,6 +190,38 @@
         /* return the collected fulfillment values */
         return promise.then(function(){return values});
     } 
+
+    Promise.prototype.attach = function(obj) {
+        this.attached = obj;
+
+        return this;
+    }
+
+    Promise.prototype.abort = function(message) {
+        if(this.attached && typeof this.attached.abort === 'function') 
+            this.attached.abort();
+
+        this.reject(message);
+
+        return this;
+    }
+
+    Promise.prototype.timeout = function(time,func) {
+        var self = this;
+
+        if(!func) func = function() {
+            self.abort("timed out");
+        }
+
+        if(time !== null) {
+            this.timer = setTimeout(func,time);
+        } else if(this.timer) {
+            clearTimeout(this.timer);
+            this.timer = undefined;
+        }   
+
+        return this;
+    }
 
 }(global||window||this));
 
