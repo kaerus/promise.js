@@ -16,6 +16,8 @@ Main features
 * Supports CommonJS and AMD loaders, or exports a global Promise(). 
 * Flexible fulfillments that allows multiple fulfillment values catched with then(value) or spread(arguments).
 * Easy to create promised wrappers by using when(task) to bundle functions/processes into a promise. 
+* Additional control through attached(), timout() & abort() methods.
+* more to come...
 
 Install
 =======
@@ -26,7 +28,7 @@ A minified built file of the library is included in dist/promise.js.
 Usage
 =====
 Example a simple webpage using promises.
-```
+```html
 <!doctype html>
 <html>
 	<head><title>Promise</title>
@@ -53,7 +55,7 @@ Example a simple webpage using promises.
 ```
 
 Example of how to use promises for Ajax.
-```
+```html
 <!doctype html>
 <html>
     <head><title>Promise</title>
@@ -145,7 +147,7 @@ promise().fulfill("abc",123,{abc:123}).spread(function(a,b,c) {
 ```
 
 Example how to create a promise around a process making it run asynchronously in your code.
-```
+```javascript
 var promisedSync = Promise().when(function(){
 	var retval = syncProc();
 	/* if syncProc() throws the error will */
@@ -156,8 +158,9 @@ var promisedSync = Promise().when(function(){
 /* Process the result whenever its ready */
 promisedSync.then(...);
 ```
+
 You may also wrap a promise around multiple functions or promises.
-```
+```javascript
 var tasks = [];
 tasks.push(someFunction);
 tasks.push(somePromise);
@@ -166,6 +169,75 @@ Promise().when(tasks).then(function(values){
 }, function(error){
 	console.log("Tasks failed", error);
 });
+```
+
+Example with a more refined Ajax wrapper using attached(), abort() & timeout().
+```javascript
+// ajax wrapper returning a promise
+function Ajax(options,data) {
+    var res = new Promise(),
+        req = new XMLHttpRequest;
+
+    options = options ? options : {};
+    data = data ? data : null;
+
+    if(typeof options !== 'object') options = {url:options};
+    if(!options.method) options.method = "get";
+    if(!options.headers) options.headers = {};
+    if(!options.timeout) options.timeout = 5000;
+    if(!options.headers.accept) options.headers.accept = "application/json";
+
+    res.attach(req);
+
+    function handle(req,res){       
+        var msg = req.responseText,
+            hdr = parseHeaders(req.getAllResponseHeaders());
+
+        if(options.headers.accept.indexOf('json') >= 0) 
+            msg = JSON.parse(msg);
+
+        if(req.status < 400) res.fulfill(msg,hdr);
+        else res.reject(msg);  
+    }
+
+    function parseHeaders(h) {
+        var ret = {}, key, val, i;
+
+        h.split('\n').forEach(function(header) {
+            if((i=header.indexOf(':')) > 0) {
+                key = header.slice(0,i).replace(/^[\s]+|[\s]+$/g,'').toLowerCase();
+                val = header.slice(i+1,header.length).replace(/^[\s]+|[\s]+$/g,'');
+                if(key && key.length) ret[key] = val;
+            }   
+        });
+
+        return ret;
+    }
+
+    req.onreadystatechange = function() {
+        if(req.readyState === 4 && req.status) {
+            /* clear response timer */
+            res.timeout(null);
+            handle(req,res);   
+        }
+    }
+
+    /* send an asynchronous XmlHttp request */
+    req.open(options.method,options.url,true);
+    
+    /* set request headers */
+    Object.keys(options.headers).forEach(function(header) {
+        req.setRequestHeader(header,options.headers[header]);
+    });
+
+    /* send request */
+    req.send(data);
+
+    /* set a timeout */
+    res.timeout(options.timeout);
+
+    return res;
+}
 ```
 
 Test & build
