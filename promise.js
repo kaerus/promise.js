@@ -40,22 +40,30 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
 
     var PENDING = 0, FULFILLED = 1, REJECTED = 2;
 
-    function Promise() {
+    function Promise(obj) {
+        /* mixin */
+        if(obj){
+            for(var key in Promise.prototype)
+                obj[key] = Promise.prototype[key];
+            
+            return obj;
+        }
+
         if(!(this instanceof Promise))
             return new Promise;
     }
 
     Promise.prototype.resolve = function() {
         var then, promise,
-            state = this.state,
+            state = this._state,
             value = this.resolved;  
 
-        while(then = this.calls.shift()) {
+        while(then = this._calls.shift()) {
             promise = then[PENDING];
 
-            if(typeof then[this.state] === 'function') {
+            if(typeof then[this._state] === 'function') {
                 try {
-                    value = then[this.state](this.resolved);  
+                    value = then[this._state](this.resolved);  
                 } catch(e) {
                     promise.reject(e); 
 
@@ -74,18 +82,18 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
                     state = FULFILLED;
                 }  
             }
-            promise.state = state;
+            promise._state = state;
             promise.resolved = value;
-            if(promise.calls) promise.resolve();
+            if(promise._calls) promise.resolve();
         }
     } 
 
     Promise.prototype.then = function(onFulfill,onReject) {
         var self = this, promise = new Promise();
 
-        if(!this.calls) this.calls = [];   
+        if(!this._calls) this._calls = [];   
 
-        this.calls[this.calls.length] = [promise, onFulfill, onReject];
+        this._calls[this._calls.length] = [promise, onFulfill, onReject];
 
         if(this.resolved) {
             setImmediate(function(){
@@ -109,27 +117,27 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
     }
 
     Promise.prototype.fulfill = function(value) {
-        if(this.state) return;
+        if(this._state) return;
         /* Constructs an array of fulfillment values */
         /* if more than one argument was provided... */
         if(arguments.length > 1) 
             value = [].slice.call(arguments);
 
-        this.state = FULFILLED;
+        this._state = FULFILLED;
         this.resolved = value;
 
-        if(this.calls) this.resolve();
+        if(this._calls) this.resolve();
 
         return this;
     }
 
     Promise.prototype.reject = function(reason) {
-        if(this.state) return;
+        if(this._state) return;
 
-        this.state = REJECTED;
+        this._state = REJECTED;
         this.resolved = reason;
 
-        if(this.calls) this.resolve();   
+        if(this._calls) this.resolve();   
 
         return this;        
     }
@@ -205,11 +213,11 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
             self.abort("timed out");
         }
 
-        if(time !== null) {
-            this.timer = setTimeout(func,time);
-        } else if(this.timer) {
-            clearTimeout(this.timer);
-            this.timer = undefined;
+        if(time !== null && !isNaN(time)) {
+            this._timer = setTimeout(func,time);
+        } else if(this._timer) {
+            clearTimeout(this._timer);
+            this._timer = undefined;
         }   
 
         return this;
