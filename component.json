@@ -1,0 +1,21 @@
+{
+    "name": "promise",
+    "description": "A+/Promises",
+    "version": "0.2.0",
+    "main": [
+        "./promise.js"
+    ],
+    "author": {
+        "name": "Anders Elo",
+        "web": "http://www.kaerus.com"
+    },
+    "licenses": [
+        {
+            "type": "APACHE2_0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0"
+        }
+    ],
+    "keywords": [
+        "promise"
+    ]
+}

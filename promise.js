@@ -18,35 +18,23 @@ var root;
 
 try{root = global} catch(e){try {root = window} catch(e){root = this}};
 
-(function (global) {
+(function () {
     "use strict"
 
-    /* exports AMD, CommonJS module or a global Promise() */    
-    if (typeof exports === 'object') {  
-        if (typeof module !== undefined && module.exports) {
-            exports = module.exports = Promise;
-        } else exports.Promise = Promise;
-    } else if (typeof define === 'function' && define.amd) {
-        define(function () { return Promise; });
-    } else if(typeof global === 'object') {
-        global.Promise = Promise; 
-    } else throw "Unable to export Promise";
-
-
     /* setImmediate shim */
-    var setImmediate = global.setImmediate;
+    var setImmediate = root.setImmediate;
 
     if(typeof setImmediate !== 'function') {
-        if(typeof global.process !== 'undefined' && global.process && typeof global.process.nextTick === 'function') {
-            setImmediate = global.process.nextTick;
-        } else if(global.vertx && typeof global.vertx.runOnLoop === 'function') {
-            setImmediate = global.vertx.runOnLoop;     
-        } else if(typeof global.MessageChannel !== "undefined") {
-            var fifo = [], channel = new global.MessageChannel();
+        if(typeof root.process !== 'undefined' && root.process && typeof root.process.nextTick === 'function') {
+            setImmediate = root.process.nextTick;
+        } else if(root.vertx && typeof root.vertx.runOnLoop === 'function') {
+            setImmediate = root.vertx.runOnLoop;     
+        } else if(typeof root.MessageChannel !== "undefined") {
+            var fifo = [], channel = new root.MessageChannel();
             channel.port1.onmessage = function () { fifo.shift()() };
             setImmediate = function (task) { fifo[fifo.length] = task; channel.port2.postMessage(); };
-        } else if(typeof global.setTimeout === 'function') {
-            setImmediate = global.setTimeout;
+        } else if(typeof root.setTimeout === 'function') {
+            setImmediate = root.setTimeout;
         } else throw "No candidate for setImmediate";   
     }
 
@@ -227,5 +215,16 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
         return this;
     }
 
-}(root));
+    /* exports AMD, CommonJS module or a global Promise() */    
+    if (typeof exports === 'object') {  
+        if (typeof module !== undefined && module.exports) {
+            exports = module.exports = Promise;
+        } else exports.Promise = Promise;
+    } else if (typeof define === 'function' && define.amd) {
+        define(function () { return Promise; });
+    } else if(typeof root === 'object') {
+        root.Promise = Promise; 
+    } else throw "Unable to export Promise";
+
+}());
 
