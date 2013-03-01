@@ -56,14 +56,14 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
     Promise.prototype.resolve = function() {
         var then, promise,
             state = this._state,
-            value = this.resolved;  
-
+            value = this.resolved;   
+                
         while(then = this._calls.shift()) {
             promise = then[PENDING];
 
             if(typeof then[this._state] === 'function') {
                 try {
-                    value = then[this._state](this.resolved);  
+                    value = then[this._state](this.resolved);    
                 } catch(e) {
                     promise.reject(e); 
 
@@ -105,12 +105,13 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
     }
 
     Promise.prototype.spread = function(onFulfill,onReject) {
+        var self = this;
 
         function spreadFulfill(value) {
             if(!Array.isArray(value)) 
                 value = [value];
 
-            return onFulfill.apply(null,value);
+            return onFulfill.apply(self,value);
         }   
 
         return this.then(spreadFulfill,onReject);
@@ -126,6 +127,7 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
         this._state = FULFILLED;
         this.resolved = value;
 
+        if(this._timer) this.timeout(null);
         if(this._calls) this.resolve();
 
         return this;
@@ -137,6 +139,7 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
         this._state = REJECTED;
         this.resolved = reason;
 
+        if(this._timer) this.timeout(null);
         if(this._calls) this.resolve();   
 
         return this;        
@@ -207,18 +210,20 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
     }
 
     Promise.prototype.timeout = function(time,func) {
+        if(time === null) {
+            clearTimeout(this._timer);
+            return this;
+        } 
+        
+        if(this._state) return this;
+
         var self = this;
 
         if(!func) func = function() {
             self.abort("timed out");
         }
-
-        if(time !== null && !isNaN(time)) {
-            this._timer = setTimeout(func,time);
-        } else if(this._timer) {
-            clearTimeout(this._timer);
-            this._timer = undefined;
-        }   
+        
+        this._timer = setTimeout(func,time);   
 
         return this;
     }
