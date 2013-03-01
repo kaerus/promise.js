@@ -63,7 +63,7 @@ try{root = global} catch(e){try {root = window} catch(e){root = this}};
 
             if(typeof then[this._state] === 'function') {
                 try {
-                    value = then[this._state](this.resolved);    
+                    value = then[this._state].call(this,this.resolved);    
                 } catch(e) {
                     promise.reject(e); 
 
