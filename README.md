@@ -17,7 +17,7 @@ Main features
 * Flexible fulfillments that allows multiple fulfillment values catched with then(value) or spread(arguments).
 * Easy to create promised wrappers by using when(task) to bundle functions/processes into a promise. 
 * Additional control through attached(), timout() & abort() methods.
-* more to come...
+* Web client component found <a href="https://github.com/kaerus-component">here</a> 
 
 Install
 =======
