@@ -10,20 +10,6 @@ A Promises/A+ library, originally developed for the <a href="https://github.com/
 Main features
 -------------
 * Conforming to the Promises/A+ specification.
-* Small footprint, no other dependencies or frameworks.
-* Simple design, fast, easy to understand, integrate & debug.
-* Runtime independent so that it works in browsers, nodejs and perhaps even in rhino. 
-* Supports CommonJS and AMD loaders, or exports a global Promise(). 
-* Flexible fulfillments that allows multiple fulfillment values catched with then(value) or spread(arguments).
-* Easy to create promised wrappers by using when(task) to bundle functions/processes into a promise. 
-* Additional control through attached(), timout() & abort() methods.
-* Web client component found <a href="https://github.com/kaerus-component">here</a> 
-
-Install
-=======
-Include this promise.js library into your project using an AMD or CommonJS module loader.
-Without any loader the library gets exported as a global Promise().
-A minified built file of the library is included in dist/promise.js.
 
 Usage
 =====

@@ -1,6 +1,6 @@
 {
   "name": "promisejs",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A+ compliant promise module",
   "keywords": [
     "promise",
@@ -15,7 +15,7 @@
     "anders elo <anders@kaerus.com>"
   ],
   "devDependencies": {
-    "promises-aplus-tests":">=1.0.0"
+    "promises-aplus-tests":">=1.3.2"
   },
   "bugs": {
     "url": "https://github.com/kaerus/promise.js/issues"
